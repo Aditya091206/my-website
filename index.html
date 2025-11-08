@@ -8,6 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Link to external CSS file -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- 🔹 Google Analytics Tracking Code -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W630NDZ882"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W630NDZ882');
+    </script>
+    <!-- 🔹 End Google Analytics -->
 </head>
 <body>
     <!-- Header Section: Title for the page -->
@@ -21,7 +31,7 @@
         <!-- Each card has a photo placeholder (CSS rectangle) and name -->
         <!-- Data attributes store info for the modal -->
         <div class="member-card" data-name="Dr. Vijayashekhar S S" data-title="Head of the Department(HOD)" data-description="<strong>Area of Expertise:-</strong><br>Deep Learning, Inverse problems, Computer VisionHead<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Head of the Department(HOD)">
-            <div class="icon">👤</div> <!-- Simple icon for visual appeal -->
+            <div class="icon">👤</div>
             <div class="photo-placeholder"></div>
             <h3>Dr. Vijayashekhar S S</h3>
         </div>
@@ -98,7 +108,7 @@
             <button id="close-modal" class="close-btn" aria-label="Close modal">&times;</button>
             <h2 id="modal-name"></h2>
             <p id="modal-title"></p>
-            <div id="modal-description"></div> <!-- Changed to <div> to allow HTML formatting -->
+            <div id="modal-description"></div>
         </div>
     </div>
 
