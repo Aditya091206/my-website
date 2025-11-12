@@ -1,230 +1,182 @@
-/* Global Styles: Set up dark theme with yellow, blue, and white accents, fonts, and smooth scrolling */
+/* Global reset */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+/* Body */
 body {
-    font-family: 'Poppins', sans-serif; /* Modern font */
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 25%, #24243e 50%, #302b63 75%, #0f0c29 100%); /* Aesthetic deep purple gradient for a cosmic, fancy effect */
-    background-size: 400% 400%; /* For animated gradient */
-    animation: gradientShift 20s ease infinite; /* Slower, more elegant animation */
-    color: #ffffff; /* White text for contrast */
-    line-height: 1.6;
-    scroll-behavior: smooth; /* Smooth scroll */
-    opacity: 0; /* Start hidden for fade-in */
-    animation: fadeInPage 1s ease-in-out 0.5s forwards; /* Page fade-in */
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 25%, #24243e 50%, #302b63 75%, #0f0c29 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+  color: #fff;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+  opacity: 0;
+  animation: fadeInPage 1s ease-in-out 0.5s forwards;
 }
 
-/* Animated Gradient Background */
 @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* Page Fade-In Animation */
 @keyframes fadeInPage {
-    to { opacity: 1; }
+  to { opacity: 1; }
 }
 
-/* Header Styles */
+/* Header */
 header {
-    text-align: center;
-    padding: 2rem 1rem;
-    background-color: rgba(30, 30, 30, 0.9); /* Semi-transparent dark overlay for header */
-    border-bottom: 2px solid #ffd700; /* Yellow accent border */
-    animation: slideDown 1s ease-out; /* Header slide-down animation */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: rgba(30, 30, 30, 0.9);
+  border-bottom: 2px solid #ffd700;
+  animation: slideDown 1s ease-out;
 }
 
 @keyframes slideDown {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .logo {
-    margin-bottom: 1rem;
+  height: 100px;
+  width: auto;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
 }
 
 header h1 {
-    font-size: 2.5rem;
-    color: #ffd700; /* Yellow accent */
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+  font-size: 2rem;
+  color: #ffd700;
+  font-weight: 600;
+  flex: 1;
+  max-width: 800px;
 }
 
-/* Main Grid Styles: Responsive grid for 14 cards */
+/* Team Grid */
 #team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive columns */
-    gap: 1.5rem;
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem;
+  padding: 2.5rem 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
-/* Member Card Styles */
+/* Cards */
 .member-card {
-    background-color: rgba(56, 55, 55, 0.9); /* Semi-transparent dark card background */
-    border-radius: 15px; /* More rounded for modern look */
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(116, 116, 116, 0.3);
-    transition: transform 0.4s ease, box-shadow 0.4s ease, rotate 0.3s ease; /* Enhanced transitions */
-    cursor: pointer;
-    opacity: 0; /* Start hidden */
-    animation: fadeInUp 0.8s ease-out forwards; /* Card entrance animation */
-    animation-delay: calc(var(--i) * 0.1s); /* Staggered animation */
-    position: relative;
-}
-
-.member-card:nth-child(1) { --i: 1; }
-.member-card:nth-child(2) { --i: 2; }
-/* Add up to nth-child(14) for staggered effect */
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+  background-color: rgba(56, 55, 55, 0.9);
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(116, 116, 116, 0.3);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
 .member-card:hover {
-    transform: scale(1.08) rotate(2deg); /* Slight scale and rotation on hover */
-    box-shadow: 0 12px 24px rgba(255, 215, 0, 0.4), 0 12px 24px rgba(135, 206, 235, 0.4); /* Enhanced yellow/blue glow */
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(255, 215, 0, 0.4), 0 12px 24px rgba(135, 206, 235, 0.4);
 }
 
-/* Icon Styles */
-.icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: #87ceeb; /* Blue accent */
-    transition: transform 0.3s ease;
-}
-
-.member-card:hover .icon {
-    transform: scale(1.2); /* Icon scales on hover */
-}
-
-.photo-placeholder {
-    width: 100%;
-    height: 150px;
-    background-color: #333; /* Placeholder rectangle */
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    border: 2px solid #87ceeb; /* Blue accent border */
-    transition: border-color 0.3s ease;
-}
-
-/* New styles for faculty photos */
 .faculty-photo {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    border: 2px solid #87ceeb; /* Blue accent border */
-    transition: border-color 0.3s ease;
-}
-
-.member-card:hover .photo-placeholder,
-.member-card:hover .faculty-photo {
-    border-color: #ffd700; /* Yellow on hover */
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 1rem;
 }
 
 .member-card h3 {
-    font-size: 1.2rem;
-    color: #ffffff;
-    font-weight: 500;
+  color: #ffd700;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
 }
 
-/* Modal Styles: Glassmorphism with blur and fade-in animation */
+/* Modal */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent overlay */
-    backdrop-filter: blur(10px); /* Glassmorphism blur */
-    z-index: 1000;
-    animation: fadeIn 0.5s ease; /* Fade-in animation */
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
-    background-color: rgba(30, 30, 30, 0.95); /* Semi-transparent dark background */
-    border-radius: 20px; /* More rounded */
-    padding: 2rem;
-    max-width: 500px;
-    margin: 10% auto;
-    position: relative;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-    animation: bounceIn 0.6s ease; /* Bounce animation on open */
-}
-
-@keyframes bounceIn {
-    0% { transform: scale(0.3); opacity: 0; }
-    50% { transform: scale(1.05); }
-    70% { transform: scale(0.9); }
-    100% { transform: scale(1); opacity: 1; }
+  background: #1e1e1e;
+  padding: 2rem;
+  border-radius: 15px;
+  max-width: 600px;
+  width: 90%;
+  text-align: left;
+  color: #fff;
+  border: 2px solid #ffd700;
 }
 
 .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: #ffd700; /* Yellow accent */
-    cursor: pointer;
-    transition: transform 0.3s ease; /* Animation for close button */
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #ffd700;
+  float: right;
+  cursor: pointer;
 }
 
-.close-btn:hover {
-    transform: rotate(180deg) scale(1.2); /* Rotate and scale on hover */
-}
-
-#modal-name {
-    color: #ffd700; /* Yellow for name */
-    margin-bottom: 0.5rem;
-}
-
-#modal-title {
-    color: #87ceeb; /* Blue for title */
-    font-style: italic;
-    margin-bottom: 1rem;
-}
-
-#modal-description {
-    color: #ffffff;
-    line-height: 1.6;
-}
-
-/* Footer Styles */
+/* Footer */
 footer {
+  background-color: rgba(30, 30, 30, 0.9);
+  border-top: 2px solid #ffd700;
+  padding: 1.5rem;
+  text-align: center;
+  color: #ddd;
+}
+
+footer a {
+  color: #ffd700;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ Responsive Tweaks */
+
+/* For tablets and smaller laptops */
+@media (max-width: 992px) {
+  header h1 {
+    font-size: 1.6rem;
+  }
+  .logo {
+    height: 80px;
+  }
+}
+
+/* For mobile screens */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
     text-align: center;
-    padding: 2rem;
-    background-color: rgba(30, 30, 30, 0.9); /* Semi-transparent dark overlay for footer */
-    border-top: 2px solid #ffd700; /* Yellow accent border */
-    margin-top: 2rem;
-}
-
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-info p {
-    margin: 0.5rem 0;
-    font-size: 1rem;
-}
-
-.footer-info a {
-    color: #87ceeb; /* Blue accent for links */
-    text-decoration: none;
-}
-
-.footer-info a:hover {
-    color: #ffd700; /* Yellow on hover */
+  }
+  header h1 {
+    font-size: 1.3rem;
+    margin-top: 0.5rem;
+  }
+  #team-grid {
+    grid-template-columns: 1fr; /* Stack cards */
+    padding: 1rem;
+  }
+  .member-card {
+    padding: 1rem;
+  }
 }
