@@ -99,15 +99,17 @@ header h1 {
   margin-top: 0.5rem;
 }
 
-/* ✅ Modal — Fixed & Centered */
+/* ✅ Modal — Fixed & Perfectly Centered */
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow-y: auto; /* allows scrolling if content is tall */
+  padding: 1rem; /* spacing for smaller screens */
 }
 
 /* When visible */
@@ -124,16 +126,28 @@ header h1 {
   text-align: left;
   color: #fff;
   border: 2px solid #ffd700;
-  box-shadow: 0 0 25px rgba(255,215,0,0.3);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+  position: relative;
+  transform: translateY(0);
+  animation: fadeInModal 0.3s ease-out;
 }
 
+/* Smooth fade-in */
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Close Button */
 .close-btn {
   background: transparent;
   border: none;
   font-size: 2rem;
   color: #ffd700;
-  float: right;
   cursor: pointer;
+  position: absolute;
+  top: 12px;
+  right: 16px;
 }
 
 /* Footer */
@@ -183,8 +197,8 @@ footer a:hover {
   }
   .modal-content {
     width: 95%;
-    max-width: 90%;
-    padding: 2.5rem;
+    max-width: none;
+    padding: 2.5rem 1.5rem;
     font-size: 1.05rem;
   }
 }
