@@ -1,128 +1,446 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile devices -->
-    <title>AIML and DS Faculty</title>
-    <!-- Import Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Link to external CSS file -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AIML and DS Faculty</title>
 
-    <!-- 🔹 Google Analytics Tracking Code -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W630NDZ882"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-W630NDZ882');
-    </script>
-    <!-- 🔹 End Google Analytics -->
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset */
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    /* Body */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 25%, #24243e 50%, #302b63 75%, #0f0c29 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      color:#fff;
+      line-height:1.6;
+      scroll-behavior: smooth;
+      opacity:0;
+      animation: fadeInPage 1s ease-in-out 0.5s forwards;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes fadeInPage { to { opacity:1; } }
+
+    /* Header */
+    header {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+      text-align:center;
+      padding:2rem 1rem;
+      background-color: rgba(30,30,30,0.9);
+      border-bottom: 2px solid #ffd700;
+      animation: slideDown 1s ease-out;
+    }
+    @keyframes slideDown { from { transform:translateY(-50px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+
+    .logo { height:100px; width:auto; margin-right:1rem; margin-bottom:1rem; }
+    header h1 {
+      font-size:2rem; color:#ffd700; font-weight:600; flex:1; max-width:800px;
+    }
+
+    /* Team Grid */
+    #team-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+      gap:2rem;
+      padding:2.5rem 2rem;
+      max-width:1300px;
+      margin:0 auto 3rem;
+    }
+
+    /* Cards */
+    .member-card {
+      background-color: rgba(56,55,55,0.9);
+      border-radius:15px;
+      padding:1.25rem;
+      text-align:center;
+      box-shadow: 0 4px 8px rgba(116,116,116,0.3);
+      transition: transform .35s ease, box-shadow .35s ease;
+      cursor: pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    .member-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(255,215,0,0.12), 0 12px 24px rgba(135,206,235,0.06);
+    }
+
+    /* Photo wrapper (keeps exact box, centers image) */
+    .photo-wrap {
+      width:100%;
+      border-radius:10px;
+      overflow:hidden;
+      display:block;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+      margin-bottom:1rem;
+      /* fixed height for uniformity */
+      height:230px;
+      position:relative;
+    }
+
+    /* The actual img uses object-fit + tuned object-position */
+    .faculty-photo {
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      /* tuned vertical offset to bring faces toward center of the visible crop */
+      object-position: center 35%;
+      -o-object-position: center 35%;
+    }
+
+    /* If an image is missing, show the emoji icon centered */
+    .member-card .icon {
+      font-size:48px;
+      color: #ddd;
+      line-height:1;
+      display:none; /* hidden by default; if you remove the img src, JS will show icon */
+      align-self:center;
+      margin-bottom:1rem;
+    }
+
+    .member-card h3 { color:#ffd700; font-size:1.05rem; margin-top:0.3rem; text-align:center; }
+    .member-card p { color:#e8e8e8; font-size:.95rem; margin-top:0.35rem; }
+
+    /* Modal & overlay */
+    .overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:999; display:none;
+      align-items:center; justify-content:center; padding:1rem;
+    }
+
+    .modal {
+      position:fixed; inset:0; z-index:1000; display:none;
+      align-items:center; justify-content:center; padding:1rem;
+    }
+    .modal[aria-hidden="false"], .overlay[aria-hidden="false"] { display:flex; }
+
+    .modal-content {
+      background:#1e1e1e;
+      border-radius:14px;
+      width:100%;
+      max-width:760px;
+      max-height:90vh;        /* prevents content from pushing modal off-center */
+      overflow-y:auto;        /* internal scroll if needed */
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      border: 2px solid #ffd700;
+      padding:1.25rem 1.5rem;
+      color:#fff;
+      position:relative;
+    }
+
+    /* Modal image + details layout */
+    .modal-inner {
+      display:flex;
+      gap:1.25rem;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .modal-photo {
+      width:180px; height:180px; border-radius:10px; overflow:hidden; flex:0 0 180px;
+    }
+    .modal-photo img { width:100%; height:100%; object-fit:cover; object-position:center 35%; display:block; }
+
+    .modal-details {
+      flex:1 1 300px;
+    }
+    .modal-details h2 { color:#ffd700; margin-bottom:.25rem; font-size:1.2rem; }
+    .modal-details p.title { color:#ddd; margin-bottom:.5rem; font-size:.98rem; }
+    .modal-details .desc { color:#e6e6e6; font-size:.94rem; line-height:1.45; }
+
+    .close-btn {
+      position:absolute; top:.5rem; right:.6rem; background:transparent; border:none; color:#ffd700; font-size:1.6rem; cursor:pointer;
+    }
+
+    /* Footer */
+    footer {
+      background-color: rgba(30,30,30,0.9);
+      border-top:2px solid #ffd700;
+      padding:1.5rem;
+      text-align:center;
+      color:#ddd;
+      margin-top:2rem;
+    }
+    footer a { color:#ffd700; text-decoration:none; }
+
+    /* Responsive tweaks */
+    @media (max-width:992px) {
+      header h1 { font-size:1.6rem; }
+      .logo { height:80px; }
+      .modal-inner { gap:1rem; }
+      .modal-photo { width:140px; height:140px; flex:0 0 140px; }
+    }
+    @media (max-width:600px) {
+      header { flex-direction:column; text-align:center; }
+      header h1 { font-size:1.25rem; margin-top:.5rem; }
+      #team-grid { grid-template-columns:1fr; padding:1rem; }
+      .member-card { padding:1rem; }
+      .photo-wrap { height:200px; }
+      .modal-content { padding:1rem; }
+    }
+
+    /* Accessibility focus */
+    .member-card:focus { outline:3px solid rgba(255,215,0,0.18); outline-offset:4px; }
+  </style>
 </head>
 <body>
-    <!-- Header Section: Title for the page -->
-    <header>
-        <img src="acharya-logo.jpg.png" alt="Acharya Institute Logo" class="logo">
-        <h1>Meet the Faculty Behind Artificial Intelligence & Machine Learning and Computer Science Engineering (Data Science)</h1>
-    </header>
 
-    <!-- Main Section: Grid of 14 team member cards -->
-    <main id="team-grid">
-        <!-- Each card has a photo placeholder (CSS rectangle) and name -->
-        <!-- Data attributes store info for the modal -->
-        <div class="member-card" data-name="Dr. Vijayashekhar S S" data-title="Associate Professor" data-description="<strong>Area of Expertise:-</strong><br>Deep Learning, Inverse problems, Computer VisionHead<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Head of the Department(HOD)">
-            <div class="icon">👤</div>
-            <img src="Vijayashekhar.png" alt="Dr. Vijayashekhar S S" class="faculty-photo">
-            <h3>Dr. Vijayashekhar S S</h3>
-        </div>
-        <div class="member-card" data-name="Dr.Kavitha Nair R" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Deep Learning, NLP, LLMs, Computer Vision, Optimization Algorithms<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>IQAC & NAAC, Department Monthly Update to Principal Office, Department Academic Coordinator, Newsletter & Magazine, FCM Coordinator, Alumni Coordinator,  Anti-Bullying and Grievances Coordinator">
-            <div class="icon">👤</div>
-            <img src="Kavitha Nair.png" alt="Dr.Kavitha Nair R" class="faculty-photo">
-            <h3>Dr.Kavitha Nair R</h3>
-        </div>
-        <div class="member-card" data-name="Dr.Anu Pallavi S" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Deep learning, CV, Signal Processing, Image Processing, Networking<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Research Coordinator, Professional Society membership and activities, Class Representative Meetings Coordinator Project Coordinator (Mini & Major) - Al & ML, Anti-Bullying and Grievances Coordinator">
-            <div class="icon">👤</div>
-            <img src="Anu Pallavi.png" alt="Dr.Anu Pallavi S" class="faculty-photo">
-            <h3>Dr.Anu Pallavi S</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Jovin Deglus" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Data Analytics, Cyber Security, Big Data Analytics, NLP<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>NBA & NAAC, DAB & DAC Coordinator Lab In Charge, Newsletter & Magazine, Training and Placement Coordinator (TPO) Department Internship Coordinator Anti-Bullying and Grievances Coordinator Department First Year Coordinator">
-            <div class="icon">👤</div>
-            <img src="jovin.png" alt="Mr.Jovin Deglus" class="faculty-photo">
-            <h3>Mr.Jovin Deglus</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Syed Musadiq Illahi" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Machine learning, loT, Deep Learning, Computer Vision<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Internal Assessment Coordinator Institution Innovation Cell SPOC for Industry Certified Specialization VTU registrations (Student, Exam, Revaluation and Photocopy, IA Marks entry)">
-            <div class="icon">👤</div>
-            <img src="Syed Musadiq.png" alt="Mr.Syed Musadiq Illahi" class="faculty-photo">
-            <h3>Mr.Syed Musadiq Illahi</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Nandakumar N" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Computer vision, ML<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Infrastructure Coordinator Extension Activities (NCMC/AICTE) - AI & ML Sports Coordinator - Al & ML NSS Coordinator">
-            <div class="icon">👤</div>
-            <img src="Nandakumar.png" alt="Mr.Nandakumar N" class="faculty-photo">
-            <h3>Mr.Nandakumar N</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Adarsha S P" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Data Science, Deep Learning<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Timetable Coordinator, QPDS, PTM Coordinator, Hospitality Coordinator & Outbound Training for Faculty, Faculty & Staff Development">
-            <div class="icon">👤</div>
-            <img src="Adarsha S P.png" alt="Mr.Adarsha S P" class="faculty-photo">
-            <h3>Mr.Adarsha S P</h3>
-        </div>
-        <div class="member-card" data-name="Ms.Surbhi" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Data analytics, Machine Learning, Deep Learning, Big data Analytics<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Department Level ERP, ALIVE & ICT Coordinator, Students Forum Activity, Website and Social Media, Cultural coordinator">
-            <div class="icon">👤</div>
-            <img src="surbhi.png" alt="Ms.Surbhi" class="faculty-photo">
-            <h3>Ms.Surbhi</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Mohammad Tahir" data-title="assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Prototyping, Product market fit validation, AloT, Mobile Application Design and Development<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Attendance Coordinator, Consultancy Works, Project Coordinator (Mini & Major) - CSE(DS), IPR/Grants/Patents, Mentor Coordinator, Anti-Bullying and Grievances Coordinator-Department level">
-            <div class="icon">👤</div>
-            <img src="Tahir.png" alt="Mr.Mohammad Tahir" class="faculty-photo">
-            <h3>Mr.Mohammad Tahir</h3>
-        </div>
-        <div class="member-card" data-name="Ms.Vinutha M" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Deep Learning<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Women Cell Coordinator, PTM Coordinator, Extension Activities (NCMC/AICTE)-AI&ML, Department Library Coordinator">
-            <div class="icon">👤</div>
-            <img src="Vinutha.png" alt="Ms.Vinutha M" class="faculty-photo">
-            <h3>Ms.Vinutha M</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Sanjay P" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Deep Learning<br><br>University Result Analysis, Extension Activities (NCMC/AICTE) - CSE(DS), Project Coordinator (Mini & Major) -CSE(DS)">
-            <div class="icon">👤</div>
-            <img src="Sanjay.png" alt="Mr.Sanjay P" class="faculty-photo">
-            <h3>Mr.Sanjay P</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Praveen Arokiaraj" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Deep Learning<br><br>Forum Activity, Faculty Achievements, Internal Assessment Coordinator, Sports Coordinator - CSE(DS)">
-            <div class="icon">👤</div>
-            <img src="praveen.png" alt="Mr.Praveen Arokiaraj" class="faculty-photo">
-            <h3>Mr.Praveen Arokiaraj</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Abhijith S" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Natural Language Processing, Machine Learning, Deep Learning, Python<br><br>Extension Activities (NCMC/AICTE) -CSE(DS), QPs and Scheme Coordinator (Internal, Tutorial, Module Tests), Record of events (report, photos)">
-            <div class="icon">👤</div>
-            <img src="Abhijith.png" alt="Mr.Abhijith S" class="faculty-photo">
-            <h3>Mr.Abhijith S</h3>
-        </div>
-        <div class="member-card" data-name="Mr.Vikas Kumar" data-title="Assistant Professor" data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Product Management<br><br>Project Coordinator (Mini & Major)-CSE(DS), Industrial Visit Coordinator, Consultancy Work, Industry Institute Interaction">
-            <div class="icon">👤</div>
-            <img src="Vikas Kumar.png" alt="Mr.Vikas Kumar" class="faculty-photo">
-            <h3>Mr.Vikas Kumar</h3>
-        </div>
-    </main>
+  <header>
+    <img src="acharya-logo.jpg.png" alt="Acharya Institute Logo" class="logo">
+    <h1>Meet the Faculty Behind Artificial Intelligence & Machine Learning and Computer Science Engineering (Data Science)</h1>
+  </header>
 
-    <!-- Modal Section: Hidden by default, populated and shown dynamically -->
-    <div id="member-modal" class="modal" aria-hidden="true">
-        <div class="modal-content">
-            <button id="close-modal" class="close-btn" aria-label="Close modal">&times;</button>
-            <h2 id="modal-name"></h2>
-            <p id="modal-title"></p>
-            <div id="modal-description"></div>
-        </div>
+  <main id="team-grid">
+    <!-- All member cards exactly as you provided -->
+    <div class="member-card" tabindex="0"
+         data-name="Dr. Vijayashekhar S S"
+         data-title="Associate Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Deep Learning, Inverse problems, Computer VisionHead<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Head of the Department(HOD)">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Vijayashekhar.png" alt="Dr. Vijayashekhar S S" class="faculty-photo"></div>
+      <h3>Dr. Vijayashekhar S S</h3>
     </div>
 
-    <!-- Footer Section: Enhanced with logo, dynamic year, links, and CTA -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-info">
-                <p>This website is made by a student Aditya.M from AIML as part of a project to showcase the faculty of AIML and DS at Acharya Institute. For inquiries, contact us at <a href="mailto:Adityas.24.beai@acharya.ac.in">Adityas.24.beai@acharya.ac.in</a>.</p>
-                <p>&copy; 2025 Acharya Institute. Where the world comes to learn | <a href="https://www.acharya.ac.in">https://www.acharya.ac.in</a></p>
-            </div>
-        </div>
-    </footer>
+    <div class="member-card" tabindex="0"
+         data-name="Dr.Kavitha Nair R"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Deep Learning, NLP, LLMs, Computer Vision, Optimization Algorithms<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>IQAC & NAAC, Department Monthly Update to Principal Office, Department Academic Coordinator, Newsletter & Magazine, FCM Coordinator, Alumni Coordinator,  Anti-Bullying and Grievances Coordinator">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Kavitha Nair.png" alt="Dr.Kavitha Nair R" class="faculty-photo"></div>
+      <h3>Dr.Kavitha Nair R</h3>
+    </div>
 
-    <!-- Link to external JS file -->
-    <script src="script.js"></script>
+    <div class="member-card" tabindex="0"
+         data-name="Dr.Anu Pallavi S"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Deep learning, CV, Signal Processing, Image Processing, Networking<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Research Coordinator, Professional Society membership and activities, Class Representative Meetings Coordinator Project Coordinator (Mini & Major) - Al & ML, Anti-Bullying and Grievances Coordinator">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Anu Pallavi.png" alt="Dr.Anu Pallavi S" class="faculty-photo"></div>
+      <h3>Dr.Anu Pallavi S</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Jovin Deglus"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Data Analytics, Cyber Security, Big Data Analytics, NLP<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>NBA & NAAC, DAB & DAC Coordinator Lab In Charge, Newsletter & Magazine, Training and Placement Coordinator (TPO) Department Internship Coordinator Anti-Bullying and Grievances Coordinator Department First Year Coordinator">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="jovin.png" alt="Mr.Jovin Deglus" class="faculty-photo"></div>
+      <h3>Mr.Jovin Deglus</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Syed Musadiq Illahi"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Machine learning, loT, Deep Learning, Computer Vision<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Internal Assessment Coordinator Institution Innovation Cell SPOC for Industry Certified Specialization VTU registrations (Student, Exam, Revaluation and Photocopy, IA Marks entry)">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Syed Musadiq.png" alt="Mr.Syed Musadiq Illahi" class="faculty-photo"></div>
+      <h3>Mr.Syed Musadiq Illahi</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Nandakumar N"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Computer vision, ML<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Infrastructure Coordinator Extension Activities (NCMC/AICTE) - AI & ML Sports Coordinator - Al & ML NSS Coordinator">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Nandakumar.png" alt="Mr.Nandakumar N" class="faculty-photo"></div>
+      <h3>Mr.Nandakumar N</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Adarsha S P"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Data Science, Deep Learning<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Timetable Coordinator, QPDS, PTM Coordinator, Hospitality Coordinator & Outbound Training for Faculty, Faculty & Staff Development">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Adarsha S P.png" alt="Mr.Adarsha S P" class="faculty-photo"></div>
+      <h3>Mr.Adarsha S P</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Ms.Surbhi"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Data analytics, Machine Learning, Deep Learning, Big data Analytics<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Department Level ERP, ALIVE & ICT Coordinator, Students Forum Activity, Website and Social Media, Cultural coordinator">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="surbhi.png" alt="Ms.Surbhi" class="faculty-photo"></div>
+      <h3>Ms.Surbhi</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Mohammad Tahir"
+         data-title="assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Prototyping, Product market fit validation, AloT, Mobile Application Design and Development<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Attendance Coordinator, Consultancy Works, Project Coordinator (Mini & Major) - CSE(DS), IPR/Grants/Patents, Mentor Coordinator, Anti-Bullying and Grievances Coordinator-Department level">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Tahir.png" alt="Mr.Mohammad Tahir" class="faculty-photo"></div>
+      <h3>Mr.Mohammad Tahir</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Ms.Vinutha M"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Deep Learning<br><br><strong>Co-ordinator and Contribution at Dept Level:-</strong><br>Women Cell Coordinator, PTM Coordinator, Extension Activities (NCMC/AICTE)-AI&ML, Department Library Coordinator">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Vinutha.png" alt="Ms.Vinutha M" class="faculty-photo"></div>
+      <h3>Ms.Vinutha M</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Sanjay P"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Deep Learning<br><br>University Result Analysis, Extension Activities (NCMC/AICTE) - CSE(DS), Project Coordinator (Mini & Major) -CSE(DS)">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Sanjay.png" alt="Mr.Sanjay P" class="faculty-photo"></div>
+      <h3>Mr.Sanjay P</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Praveen Arokiaraj"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Deep Learning<br><br>Forum Activity, Faculty Achievements, Internal Assessment Coordinator, Sports Coordinator - CSE(DS)">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="praveen.png" alt="Mr.Praveen Arokiaraj" class="faculty-photo"></div>
+      <h3>Mr.Praveen Arokiaraj</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Abhijith S"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Natural Language Processing, Machine Learning, Deep Learning, Python<br><br>Extension Activities (NCMC/AICTE) -CSE(DS), QPs and Scheme Coordinator (Internal, Tutorial, Module Tests), Record of events (report, photos)">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Abhijith.png" alt="Mr.Abhijith S" class="faculty-photo"></div>
+      <h3>Mr.Abhijith S</h3>
+    </div>
+
+    <div class="member-card" tabindex="0"
+         data-name="Mr.Vikas Kumar"
+         data-title="Assistant Professor"
+         data-description="<strong>Area of Expertise:-</strong><br>Machine Learning, Product Management<br><br>Project Coordinator (Mini & Major)-CSE(DS), Industrial Visit Coordinator, Consultancy Work, Industry Institute Interaction">
+      <div class="icon">👤</div>
+      <div class="photo-wrap"><img src="Vikas Kumar.png" alt="Mr.Vikas Kumar" class="faculty-photo"></div>
+      <h3>Mr.Vikas Kumar</h3>
+    </div>
+  </main>
+
+  <!-- Overlay (dark) -->
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+  <!-- Modal -->
+  <div id="member-modal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+      <button id="close-modal" class="close-btn" aria-label="Close">&times;</button>
+
+      <div class="modal-inner">
+        <div class="modal-photo" id="modal-photo">
+          <!-- image inserted by JS -->
+        </div>
+
+        <div class="modal-details">
+          <h2 id="modal-name"></h2>
+          <p class="title" id="modal-title"></p>
+          <div class="desc" id="modal-description"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-info">
+        <p>This website is made by a student Aditya.M from AIML as part of a project to showcase the faculty of AIML and DS at Acharya Institute. For inquiries, contact us at <a href="mailto:Adityas.24.beai@acharya.ac.in">Adityas.24.beai@acharya.ac.in</a>.</p>
+        <p>&copy; 2025 Acharya Institute. Where the world comes to learn | <a href="https://www.acharya.ac.in" target="_blank" rel="noopener noreferrer">acharya.ac.in</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Modal logic - populates from data-* attributes on click
+    (function(){
+      const cards = document.querySelectorAll('.member-card');
+      const modal = document.getElementById('member-modal');
+      const overlay = document.getElementById('overlay');
+      const btnClose = document.getElementById('close-modal');
+
+      const modalName = document.getElementById('modal-name');
+      const modalTitle = document.getElementById('modal-title');
+      const modalDesc = document.getElementById('modal-description');
+      const modalPhoto = document.getElementById('modal-photo');
+
+      function openModalFromCard(card) {
+        const name = card.getAttribute('data-name') || '';
+        const title = card.getAttribute('data-title') || '';
+        const description = card.getAttribute('data-description') || '';
+        const imgEl = card.querySelector('.faculty-photo');
+
+        // Inject values
+        modalName.innerText = name;
+        modalTitle.innerText = title;
+        modalDesc.innerHTML = description;
+
+        // Photo - clone image or fallback emoji
+        modalPhoto.innerHTML = '';
+        if (imgEl && imgEl.getAttribute('src')) {
+          const cloned = imgEl.cloneNode(true);
+          cloned.style.width = '100%';
+          cloned.style.height = '100%';
+          cloned.classList.add('modal-img');
+          modalPhoto.appendChild(cloned);
+        } else {
+          modalPhoto.innerHTML = '<div style="font-size:48px; color:#ddd; display:flex;align-items:center;justify-content:center;height:100%;">👤</div>';
+        }
+
+        modal.setAttribute('aria-hidden','false');
+        overlay.setAttribute('aria-hidden','false');
+
+        // trap focus briefly (basic)
+        btnClose.focus();
+      }
+
+      function closeModal() {
+        modal.setAttribute('aria-hidden','true');
+        overlay.setAttribute('aria-hidden','true');
+        modalName.innerText = '';
+        modalTitle.innerText = '';
+        modalDesc.innerHTML = '';
+        modalPhoto.innerHTML = '';
+      }
+
+      // click handlers
+      cards.forEach(card => {
+        card.addEventListener('click', () => openModalFromCard(card));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModalFromCard(card); }
+        });
+      });
+
+      btnClose.addEventListener('click', closeModal);
+      overlay.addEventListener('click', closeModal);
+
+      // close on ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      // If an image fails to load, show icon instead (prevents blank area)
+      document.querySelectorAll('.faculty-photo').forEach(img => {
+        img.addEventListener('error', () => {
+          const parent = img.closest('.member-card');
+          if (parent) {
+            parent.querySelector('.photo-wrap').innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;color:#ddd">👤</div>';
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
