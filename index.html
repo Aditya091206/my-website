@@ -54,6 +54,7 @@
     .result-item:hover { background:rgba(176,168,160,0.2); }
     .highlight { background:#b0a8a0; color:#000; font-weight:bold; border-radius:4px; padding:0 4px; }
 
+    /* DESKTOP GRID */
     #team-grid {
       display:grid;
       grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
@@ -77,8 +78,50 @@
       object-position: center 10%;
     }
     .head-fix { object-position: center 5% !important; }
-
     .member-card h3 { color:#ffd700; font-size:1.08rem; font-weight:600; margin-top:0.4rem; }
+
+    /* MOBILE – EXACTLY LIKE YOUR PHOTO */
+    @media (max-width: 768px) {
+      #team-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2rem 1rem;
+      }
+      .member-card {
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+      }
+      .member-card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+      }
+      .photo-wrap {
+        height: auto;
+        margin-bottom: 1.2rem;
+        background: transparent;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 5px solid #4fc3f7;
+        box-shadow: 0 10px 30px rgba(79, 195, 247, 0.4);
+      }
+      .faculty-photo {
+        width: 100%;
+        height: auto;
+        min-height: 340px;
+        object-fit: cover;
+        object-position: center 10%;
+      }
+      .head-fix { object-position: center 5% !important; }
+      .member-card h3 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-align: center;
+        margin-top: 0.8rem;
+        text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+      }
+    }
 
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999; display:none; }
     .modal { position:fixed; inset:0; z-index:1000; display:none; align-items:center; justify-content:center; padding:1.5rem; }
@@ -113,7 +156,6 @@
     @media (max-width:768px) {
       header h1 { font-size:1.7rem; }
       .logo { height:90px; }
-      .photo-wrap { height:230px; }
       .modal-inner { flex-direction:column; align-items:center; text-align:center; }
       .modal-photo { width:220px; height:260px; }
     }
@@ -209,7 +251,7 @@
   <div class="overlay" id="overlay" aria-hidden="true"></div>
   <div id="member-modal" class="modal" aria-hidden="true">
     <div class="modal-content">
-      <button id="close-modal" class="close-btn" aria-label="Close">×</button>
+      <button id="close-modal" class="close-btn" aria-label="Close">x</button>
       <div class="modal-inner">
         <div class="modal-photo" id="modal-photo"></div>
         <div class="modal-details">
@@ -254,11 +296,7 @@
       searchInput.addEventListener('input', () => {
         const query = searchInput.value.trim();
         resultsBox.innerHTML = '';
-        
-        if (!query) {
-          resultsBox.style.display = 'none';
-          return;
-        }
+        if (!query) { resultsBox.style.display = 'none'; return; }
 
         const lowerQuery = query.toLowerCase();
         const matches = faculty.filter(f => f.searchName.startsWith(lowerQuery));
